@@ -1,19 +1,24 @@
-﻿using Grasshopper;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
+﻿using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel;
+using Grasshopper;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
 
 namespace Kniteretta
 {
-    public class LoadImage : GH_Component
+    public class BitmapToColours : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the MyComponent1 class.
         /// </summary>
-        public LoadImage()
-          : base("Load image", "LoadImg",
-              "Loads an images from a path into a bidimensional colour array",
+        public BitmapToColours()
+          : base("Bitmap to colours", "LoadImg",
+              "Converts a bitmap image into a bidimensional colour array",
               "Kniteretta", "Load")
         {
         }
@@ -23,7 +28,7 @@ namespace Kniteretta
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Path", "path", "Path of the image to load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Bitmap", "bmp", "Bitmap image to convert", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -40,10 +45,11 @@ namespace Kniteretta
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            string path = "";
-            if (!DA.GetData(0, ref path)) return;
+            Bitmap bmp = null;
+            if (!DA.GetData(0, ref bmp)) return;
 
-            GH_Colour[,] arr = Util.LoadImage(path);
+
+            GH_Colour[,] arr = Util.ColoursFromBmp(bmp);
 
             DataTree<GH_Colour> tree = new DataTree<GH_Colour>();
             for (int i = 0; i < arr.GetLength(0); i++)
@@ -68,7 +74,7 @@ namespace Kniteretta
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("66DC40DA-2C0F-4864-B0F8-38B36D3C3C2A"); }
+            get { return new Guid("E666364D-9C06-4FF2-95FE-2E92AFC10610"); }
         }
     }
 }

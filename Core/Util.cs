@@ -44,6 +44,25 @@ namespace Kniteretta
             return colourArray;
         }
 
+        /// <summary>
+        /// Converts a bitmap image into a <see cref="GH_Colour"/> bi-dimensional array
+        /// </summary>
+        /// <param name="bitmap">the source bitmap object</param>
+        /// <returns></returns>
+        public static GH_Colour[,] ColoursFromBmp(Bitmap bitmap)
+        {
+            GH_Colour[,] colourArray = new GH_Colour[bitmap.Width, bitmap.Height];
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    colourArray[i, j] = new GH_Colour(bitmap.GetPixel(i, j));
+                }
+            }
+
+            return colourArray;
+        }
+
         public static Bitmap GetImage(GH_Colour[,] arr)
         {
             int width = arr.GetLength(0);
