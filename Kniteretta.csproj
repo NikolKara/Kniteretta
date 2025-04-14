@@ -60,7 +60,7 @@
   </PropertyGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if not exist &quot;$(SolutionDir)Deployment&quot; mkdir &quot;$(SolutionDir)Deployment&quot;&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.dll&quot; &quot;$(SolutionDir)Deployment&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.gha&quot; &quot;$(SolutionDir)Deployment&quot; /Y" />
+    <Exec Command="if not exist &quot;$(SolutionDir)Release&quot; mkdir &quot;$(SolutionDir)Release&quot;&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.dll&quot; &quot;$(SolutionDir)Release&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.gha&quot; &quot;$(SolutionDir)Release&quot; /Y" />
   </Target>
 
 </Project>
