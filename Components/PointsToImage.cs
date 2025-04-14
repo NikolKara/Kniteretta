@@ -18,7 +18,9 @@ namespace Kniteretta.Components
         /// </summary>
         public PointsToImage()
           : base("Points to image", "PntsToImg",
-              "Converts collections of points to a bitmap image",
+              "Converts collections of points to a bitmap image. " +
+                "Points must be passed as groups, where each group represent a colour. " +
+                "Points must also be scaled to a 1x1 m grid, where 1 point = 1 pixel in the final image",
               "Kniteretta", "Load")
         {
         }
@@ -53,7 +55,7 @@ namespace Kniteretta.Components
 
             if (points.Branches.Count != colours.Count)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Number of colours does not match number of points");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Number of colours does not match number of point groups");
                 return;
             }
 
