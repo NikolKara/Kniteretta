@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -43,8 +44,8 @@ namespace Kniteretta.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             //pManager.AddGenericParameter("Output", "out", "The resulting command file", GH_ParamAccess.item);
-            pManager.AddColourParameter("Stitch colours", "S", "Bidemensional array (tree) of the stitch colours read", GH_ParamAccess.tree);
-            pManager.AddColourParameter("Yarn colours", "Y", "Bidemensional array (tree) of the yarn colours read", GH_ParamAccess.tree);
+            pManager.AddColourParameter("Stitch colours", "S", "Bidimensional array (tree) of the stitch colours read", GH_ParamAccess.tree);
+            pManager.AddColourParameter("Yarn colours", "Y", "Bidimensional array (tree) of the yarn colours read", GH_ParamAccess.tree);
         }
 
         /// <summary>
@@ -53,6 +54,7 @@ namespace Kniteretta.Components
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            var time = DateTime.Now.Millisecond;
             // get the stitch colour pattern
             if (!DA.GetDataTree<GH_Colour>(0, out GH_Structure<GH_Colour> stitches)) return;
             if (!DA.GetDataTree<GH_Colour>(1, out GH_Structure<GH_Colour> yarns)) return;
@@ -65,30 +67,32 @@ namespace Kniteretta.Components
             KYarnPalette yPalette = new KYarnPalette();
             if (!DA.GetData(3, ref yPalette)) yPalette = new KYarnPalette();
 
-            KGenerator generator = new KGenerator(sPalette, Util.TreeTo2D(stitches), yPalette, Util.TreeTo2D(yarns), new KParameters());
+            // Convert trees to 2D arrays
+            GH_Colour[,] stitchesArray = Util.TreeTo2D(stitches);
+            GH_Colour[,] yarnsArray = Util.TreeTo2D(yarns);
+
+            // Create generator and implement transfers
+            KGenerator generator = new KGenerator(sPalette, stitchesArray, yPalette, yarnsArray, new KParameters());
             (GH_Colour[,] newStitches, GH_Colour[,] newYarns) = generator.ImplementTransfers();
 
+            // Convert 2D arrays back to trees
             DataTree<GH_Colour> stitchesTree = new DataTree<GH_Colour>();
+            DataTree<GH_Colour> yarnsTree = new DataTree<GH_Colour>();
+
             for (int i = 0; i < newStitches.GetLength(0); i++)
             {
-                GH_Path p = new GH_Path(i);
+                GH_Path sPath = new GH_Path(i);
+                GH_Path yPath = new GH_Path(i);
                 for (int j = 0; j < newStitches.GetLength(1); j++)
                 {
-                    stitchesTree.Add(newStitches[i, j], p);
+                    stitchesTree.Add(newStitches[i, j], sPath);
+                    yarnsTree.Add(newYarns[i, j], yPath);
                 }
-            }
-            DA.SetDataTree(0, stitchesTree);
+            };
 
-            DataTree<GH_Colour> yarnsTree = new DataTree<GH_Colour>();
-            for (int i = 0; i < newYarns.GetLength(0); i++)
-            {
-                GH_Path p = new GH_Path(i);
-                for (int j = 0; j < newYarns.GetLength(1); j++)
-                {
-                    yarnsTree.Add(newYarns[i, j], p);
-                }
-            }
+            DA.SetDataTree(0, stitchesTree);
             DA.SetDataTree(1, yarnsTree);
+            double elapsed = DateTime.Now.Millisecond - time;
         }
 
         /// <summary>

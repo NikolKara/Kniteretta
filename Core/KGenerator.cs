@@ -101,9 +101,11 @@ namespace Kniteretta
         /// </summary>
         public void Generate()
         {
+            var time = DateTime.Now;
             GenerateStitches();
             GenerateYarn();
             Writer.Generate();
+            var elapsed = DateTime.Now.Millisecond - time.Millisecond;
         }
 
         /// <summary>
@@ -114,7 +116,7 @@ namespace Kniteretta
         {
             if (_stitchDict.Count > 0)
             {
-                string stitchSymbols = "";
+                var stitchSymbols = new System.Text.StringBuilder();
                 int width = _stitchPatterns.GetLength(0);
                 int height = _stitchPatterns.GetLength(1);
 
@@ -124,12 +126,12 @@ namespace Kniteretta
                     {
                         GH_Colour pixel = _stitchPatterns[w, h];
                         int key = pixel.Value.ToArgb();
-                        if (_stitchDict.ContainsKey(key)) stitchSymbols += _stitchDict[key];
-                        else stitchSymbols += " ";
+                        if (_stitchDict.ContainsKey(key)) stitchSymbols.Append(_stitchDict[key]);
+                        else stitchSymbols.Append(" ");
                     }
-                    stitchSymbols += '\n';
+                    stitchSymbols.Append('\n');
                 }
-                Writer.SetParameter("stitch_symbols", stitchSymbols);
+                Writer.SetParameter("stitch_symbols", stitchSymbols.ToString());
             }
             else
             {
@@ -145,7 +147,7 @@ namespace Kniteretta
         {
             if (_yarnDict.Count > 0)
             {
-                string yarnSymbols = "";
+                var yarnSymbols = new System.Text.StringBuilder();
                 int width = _yarnPatterns.GetLength(0);
                 int height = _yarnPatterns.GetLength(1);
 
@@ -155,12 +157,12 @@ namespace Kniteretta
                     {
                         GH_Colour pixel = _yarnPatterns[w, h];
                         int key = pixel.Value.ToArgb();
-                        if (_yarnDict.ContainsKey(key)) yarnSymbols += _yarnDict[key];
-                        else yarnSymbols += " ";
+                        if (_yarnDict.ContainsKey(key)) yarnSymbols.Append(_yarnDict[key]);
+                        else yarnSymbols.Append(" ");
                     }
-                    yarnSymbols += '\n';
+                    yarnSymbols.Append('\n');
                 }
-                Writer.SetParameter("yarn", yarnSymbols);
+                Writer.SetParameter("yarn", yarnSymbols.ToString());
             }
             else
             {
@@ -195,25 +197,26 @@ namespace Kniteretta
 
         public (GH_Colour[,], GH_Colour[,]) ImplementTransfers()
         {
+            int width = _stitchPatterns.GetLength(0);
+            int height = _stitchPatterns.GetLength(1);
+
             // create lists to store the results
             List<GH_Colour[]> stitchesWithTransfers = new List<GH_Colour[]>();
             List<GH_Colour[]> yarnsWithTransfers = new List<GH_Colour[]>();
 
-            int width = _stitchPatterns.GetLength(0);
-            int height = _stitchPatterns.GetLength(1);
             // walk through the stitches, bottom up
             for (int y = height - 1; y >= 0; y--)
             {
-                GH_Colour[] currentStitchLine = GetStichLine(y);
-                GH_Colour[] previousStitchLine = GetStichLine(y + 1);
-                GH_Colour[] nextStichLine = GetStichLine(y - 1);
+                GH_Colour[] currentStitchLine = GetLine(_stitchPatterns, y);
+                GH_Colour[] previousStitchLine = y + 1 < height ? GetLine(_stitchPatterns, y + 1) : null;
+                GH_Colour[] nextStitchLine = y - 1 >= 0 ? GetLine(_stitchPatterns, y - 1) : null;
 
-                GH_Colour[] currentYarnLine = GetYarnLine(y);
+                GH_Colour[] currentYarnLine = GetLine(_yarnPatterns, y);
 
                 // if there is no previous line or it is equal to the current, skip and add the current line
                 if (previousStitchLine == null)
                 {
-                    if (AreLinesEqual(currentStitchLine, nextStichLine))
+                    if (AreLinesEqual(currentStitchLine, nextStitchLine))
                     {
                         stitchesWithTransfers.Add(currentStitchLine);
                         yarnsWithTransfers.Add(currentYarnLine);
@@ -224,7 +227,7 @@ namespace Kniteretta
                 {
                     if (AreLinesEqual(currentStitchLine, previousStitchLine))
                     {
-                        if (nextStichLine == null || AreLinesEqual(currentStitchLine, nextStichLine))
+                        if (nextStitchLine == null || AreLinesEqual(currentStitchLine, nextStitchLine))
                         {
                             stitchesWithTransfers.Add(currentStitchLine);
                             yarnsWithTransfers.Add(currentYarnLine);
@@ -243,12 +246,12 @@ namespace Kniteretta
                 GH_Colour[] yarnTransferLine = Enumerable.Repeat(_yarnPalette.Yarn0, width).ToArray();
                 bool changedPrevious = false;
                 bool changedNext = false;
+
                 for (int x = 0; x < width; x++)
                 {
                     // compare two cells at a time
                     int current = currentStitchLine[x].Value.ToArgb();
-                    int previous = 0;
-                    if (previousStitchLine != null) previous = previousStitchLine[x].Value.ToArgb();
+                    int previous = previousStitchLine != null ? previousStitchLine[x].Value.ToArgb() : 0;
 
                     // detect pattern cases
                     // going from front to miss
@@ -267,20 +270,18 @@ namespace Kniteretta
 
                         previousToBackLine[x] = _stitchPalette.TransferToRear;
 
-                        GH_Colour[] transferLine = new GH_Colour[width];
                         GH_Colour transferType = targetIndex > x ?
                             diff == 1 ? _stitchPalette.RightRearToFront1 :
                             diff == 2 ? _stitchPalette.RightRearToFront2 : _stitchPalette.RightRearToFront3 :
                             diff == 1 ? _stitchPalette.LeftRearToFront1 :
                             diff == 2 ? _stitchPalette.LeftRearToFront2 : _stitchPalette.LeftRearToFront3;
-                        transferLine[x] = transferType;
 
                         // add the index to the appropriate transfer type in the dictionary
                         if (previousTransferIndexDict.ContainsKey(transferType)) previousTransferIndexDict[transferType].Add(x);
                         else previousTransferIndexDict[transferType] = new List<int> { x };
                     }
                     // going from miss to front
-                    else if (current == _stitchPalette.Miss.Value.ToArgb() && nextStichLine != null && nextStichLine[x].Value.ToArgb() == _stitchPalette.Front.Value.ToArgb())
+                    else if (current == _stitchPalette.Miss.Value.ToArgb() && nextStitchLine != null && nextStitchLine[x].Value.ToArgb() == _stitchPalette.Front.Value.ToArgb())
                     {
                         // need to transfer the closest front stitch to back and then to the current position
                         // find the closest point to transfer from
@@ -304,25 +305,22 @@ namespace Kniteretta
 
                         nextToBackLine[sourceIndex] = _stitchPalette.TransferToRear;
 
-                        GH_Colour[] transferLine = new GH_Colour[width];
                         GH_Colour transferType = sourceIndex > x ?
                             diff == 1 ? _stitchPalette.LeftRearToFront1 :
                             diff == 2 ? _stitchPalette.LeftRearToFront2 : _stitchPalette.LeftRearToFront3 :
                             diff == 1 ? _stitchPalette.RightRearToFront1 :
                             diff == 2 ? _stitchPalette.RightRearToFront2 : _stitchPalette.RightRearToFront3;
-                        transferLine[sourceIndex] = transferType;
 
                         // add the index to the appropriate transfer type in the dictionary
                         if (nextTransferIndexDict.ContainsKey(transferType)) nextTransferIndexDict[transferType].Add(sourceIndex);
                         else nextTransferIndexDict[transferType] = new List<int> { sourceIndex };
                     }
-
                 }
 
                 if ((previousToBackLine.Length == 0 && previousTransferIndexDict.Count == 0) ||
                     (nextToBackLine.Length == 0 && nextTransferIndexDict.Count == 0))
                 {
-                    // if there were no transfers calculates (in case of unsuported transfer type)
+                    // if there were no transfers calculates (in case of unsupported transfer type)
                     stitchesWithTransfers.Add(currentStitchLine);
                     yarnsWithTransfers.Add(currentYarnLine);
                     continue;
@@ -331,7 +329,7 @@ namespace Kniteretta
                 {
                     if (changedPrevious)
                     {
-                        // detect if there are neighbouring cells that are moving to back on the previous lines
+                        // detect if there are neighboring cells that are moving to back on the previous lines
                         // create an array to store the moved transfers
                         GH_Colour[] toPrevSecondBackLine = new GH_Colour[width];
                         bool movedToSecond = false;
@@ -340,7 +338,7 @@ namespace Kniteretta
                             GH_Colour current = previousToBackLine[i];
                             GH_Colour previous = previousToBackLine[i - 1];
 
-                            // check if the neighbours are the same
+                            // check if the neighbors are the same
                             if (current != null && previous != null && current == previous)
                             {
                                 // move transfer to second array
@@ -355,7 +353,7 @@ namespace Kniteretta
                         stitchesWithTransfers.Add(previousToBackLine);
                         if (movedToSecond) stitchesWithTransfers.Add(toPrevSecondBackLine);
 
-                        // create the trasnfer lines, per type
+                        // create the transfer lines, per type
                         List<GH_Colour[]> newPrevTransferLines = new List<GH_Colour[]>();
                         foreach (var item in previousTransferIndexDict)
                         {
@@ -380,7 +378,7 @@ namespace Kniteretta
 
                     // add current line when transfers for it have been implemented
                     stitchesWithTransfers.Add(currentStitchLine);
-                    
+
                     // add the current yarn line
                     yarnsWithTransfers.Add(currentYarnLine);
 
@@ -393,7 +391,7 @@ namespace Kniteretta
                             GH_Colour current = nextToBackLine[i];
                             GH_Colour next = nextToBackLine[i + 1];
 
-                            // check if the neighbours are the same
+                            // check if the neighbors are the same
                             if (current != null && next != null && current == next)
                             {
                                 // move transfer to second array
@@ -408,7 +406,7 @@ namespace Kniteretta
                         stitchesWithTransfers.Add(nextToBackLine);
                         if (movedToSecond) stitchesWithTransfers.Add(toNextSecondBackLine);
 
-                        // create the trasnfer lines, per type
+                        // create the transfer lines, per type
                         List<GH_Colour[]> newNextTransferLines = new List<GH_Colour[]>();
                         foreach (var item in nextTransferIndexDict)
                         {
@@ -431,10 +429,9 @@ namespace Kniteretta
                         }
                     }
                 }
-
             }
 
-            // organise the result
+            // organize the result
             // stitches are created in reverse order, so they need to be reversed here
             stitchesWithTransfers.Reverse();
             yarnsWithTransfers.Reverse();
@@ -459,6 +456,18 @@ namespace Kniteretta
 
             return (resultStitches, resultYarns);
         }
+
+        private GH_Colour[] GetLine(GH_Colour[,] patterns, int y)
+        {
+            int width = patterns.GetLength(0);
+            GH_Colour[] result = new GH_Colour[width];
+            for (int i = 0; i < width; i++)
+            {
+                result[i] = patterns[i, y];
+            }
+            return result;
+        }
+
 
         private bool AreLinesEqual(GH_Colour[] a, GH_Colour[] b)
         {
