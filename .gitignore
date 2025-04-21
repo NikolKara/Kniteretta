@@ -400,5 +400,5 @@ FodyWeavers.xsd
 .vscode
 
 # Plugin installation files 
-.gha
-# Install.zip
+*.gha
+Install.zip
