@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+env:
+  SOLUTION_FILE_PATH: Kniteretta.sln
+  BUILD_CONFIGURATION: Release
+
+jobs:
+
+  # --
+  # -- Verify Version Step
+  # --
+
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: semver
+        uses: matt-usurp/validate-semver@v1
+        with:
+          version: ${{ github.ref }}
+
+    outputs:
+      version: ${{ steps.semver.outputs.version }}
+
+  # --
+  # -- Release Step
+  # --
+
+  release-plugin:
+    name: Release Plugin
+    runs-on: windows-latest
+
+    needs:
+      - version
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.0.2
+      
+      - name: Setup Nuget
+        uses: NuGet/setup-nuget@v1.1.1
+
+      - name: Restore NuGet packages
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+      - name: Build
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      
+      - name: Rename on release
+        run: |
+          mv release-files/Install.zip release-files/Install-${{github.ref_name}}.zip
+          echo "FILE_NAME=release-files/Install-${{github.ref_name}}.zip" >> $env:GITHUB_ENV
+
+      - name: Attach Artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ env.FILE_NAME }}

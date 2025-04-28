@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+.vscode
+
+# Plugin installation files 
+*.gha
+Install.zip

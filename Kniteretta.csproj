@@ -60,7 +60,7 @@
   </PropertyGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if not exist &quot;$(SolutionDir)Release&quot; mkdir &quot;$(SolutionDir)Release&quot;&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.dll&quot; &quot;$(SolutionDir)Release&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.gha&quot; &quot;$(SolutionDir)Release&quot; /Y" />
+    <Exec Command=":: delete installation file, ensure clean installation&#xD;&#xA;if exist &quot;$(SolutionDir)release-files\Install.zip&quot; rd /s /q &quot;$(SolutionDir)release-files\Install.zip&quot;&#xD;&#xA;&#xD;&#xA;if not exist &quot;$(SolutionDir)release-files&quot; mkdir &quot;$(SolutionDir)release-files&quot;&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.dll&quot; &quot;$(SolutionDir)release-files&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)$(OutputPath)*.gha&quot; &quot;$(SolutionDir)release-files&quot; /Y&#xD;&#xA;if exist &quot;$(SolutionDir)release-files&quot; (powershell Compress-Archive -Path &quot;$(SolutionDir)release-files\*&quot; -DestinationPath &quot;$(SolutionDir)release-files\Install.zip&quot; -Force) " />
   </Target>
 
 </Project>
