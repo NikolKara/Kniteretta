@@ -121,14 +121,23 @@
   <data name="GenerateKCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GenerateKCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Image" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="LoadImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LoadImage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Parameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Parameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="PathLoadImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PathLoadImage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PointsToImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PointsToImage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="SPalette" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SPalette.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Transfers" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Transferes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="YPalette" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\YPalette.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
