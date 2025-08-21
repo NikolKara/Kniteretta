@@ -73,9 +73,9 @@ namespace Kniteretta.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Image {
+        internal static System.Drawing.Bitmap LoadImage {
             get {
-                object obj = ResourceManager.GetObject("Image", resourceCulture);
+                object obj = ResourceManager.GetObject("LoadImage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,39 @@ namespace Kniteretta.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PathLoadImage {
+            get {
+                object obj = ResourceManager.GetObject("PathLoadImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PointsToImage {
+            get {
+                object obj = ResourceManager.GetObject("PointsToImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SPalette {
             get {
                 object obj = ResourceManager.GetObject("SPalette", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Transfers {
+            get {
+                object obj = ResourceManager.GetObject("Transfers", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

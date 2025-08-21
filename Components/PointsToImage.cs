@@ -99,7 +99,7 @@ namespace Kniteretta.Components
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.Image;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.PointsToImage;
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.

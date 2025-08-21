@@ -9,10 +9,13 @@
   </PropertyGroup>
 	
   <ItemGroup>
-    <None Remove="Resources\GenerateKCode.png" />
     <None Remove="Resources\Image.png" />
+    <None Remove="Resources\LoadImage.png" />
     <None Remove="Resources\Parameters.png" />
+    <None Remove="Resources\PathLoadImage.png" />
+    <None Remove="Resources\PointsToImage.png" />
     <None Remove="Resources\SPalette.png" />
+    <None Remove="Resources\Transferes.png" />
     <None Remove="Resources\YPalette.png" />
   </ItemGroup>
 	
@@ -20,15 +23,16 @@
     <EmbeddedResource Include="Resources\GenerateKCode.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Image.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\LoadImage.png" />
     <EmbeddedResource Include="Resources\Parameters.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PathLoadImage.png" />
+    <EmbeddedResource Include="Resources\PointsToImage.png" />
     <EmbeddedResource Include="Resources\SPalette.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Transferes.png" />
     <EmbeddedResource Include="Resources\YPalette.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
